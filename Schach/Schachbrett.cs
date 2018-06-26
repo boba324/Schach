@@ -27,7 +27,8 @@ namespace Schach
         public Figur[,] Feld;
         public bool WeissAmZug = true;
         private bool isDebug = false;
-        
+        private bool pro = false;
+
         //Hintergrundfarbe
         public Color HintergrundFarbe
         {
