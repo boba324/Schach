@@ -14,7 +14,7 @@ namespace Schach
         {
             this.ImageFile = "BishopSmall";
         }
-        //kannBetreten ist die Methode in jeder Figur Klasse welche angibt wie sich diese Figur zu verhalten hat(wie sie sich bewegen kann).
+        //kannBetreten ist die Methode in jeder Figur Klasse welche angibt wie sich diese Figur zu verhalten hat(wie sie sich bewegen kann)
         public override bool kannBetreten(int zeile, int spalte)
         {
             for (int i = 1; i < 8; i++)
