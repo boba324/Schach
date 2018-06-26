@@ -18,7 +18,8 @@ namespace Schach
         private Graphics gr;
         private int b = 8;
         private int h = 8;
-        private int punkte = 0;
+        private int wpunkte = 0;
+        private int spunkte = 0;
         public eventHandler BitmapGeaendert;
         private int beschriftung = 50;
         private Color hintergrundfarbe;
@@ -27,7 +28,15 @@ namespace Schach
         public Figur[,] Feld;
         public bool WeissAmZug = true;
         private bool isDebug = false;
-        private bool pro = false;
+        private bool pro = true;
+        private bool koenigGeschlagen;
+
+        public bool KoenigGeschlagen
+        {
+            get { return koenigGeschlagen; }
+            set { koenigGeschlagen = value; }
+        }
+
 
         //Hintergrundfarbe
         public Color HintergrundFarbe
@@ -97,6 +106,53 @@ namespace Schach
             }
         }
 
+        public void neuesSpiel()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Feld[i, j] = null;
+                }
+            }
+            
+            //Weiße Figuren
+            this.FigurHinzufuegen(new Turm(true, 0, 0, true, ref Feld));
+            this.FigurHinzufuegen(new Turm(true, 0, 7, true, ref Feld));
+            this.FigurHinzufuegen(new Springer(true, 0, 1, true, ref Feld));
+            this.FigurHinzufuegen(new Springer(true, 0, 6, true, ref Feld));
+            this.FigurHinzufuegen(new Bischhof(true, 0, 2, true, ref Feld));
+            this.FigurHinzufuegen(new Bischhof(true, 0, 5, true, ref Feld));
+            this.FigurHinzufuegen(new Koenig(true, 0, 4, true, ref Feld));
+            this.FigurHinzufuegen(new Dame(true, 0, 3, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 0, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 1, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 2, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 3, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 4, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 5, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 6, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(true, 1, 7, true, ref Feld));
+            //Schwarze Figuren
+            this.FigurHinzufuegen(new Turm(false, 7, 0, true, ref Feld));
+            this.FigurHinzufuegen(new Turm(false, 7, 7, true, ref Feld));
+            this.FigurHinzufuegen(new Springer(false, 7, 1, true, ref Feld));
+            this.FigurHinzufuegen(new Springer(false, 7, 6, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 7, true, ref Feld));
+            this.FigurHinzufuegen(new Bischhof(false, 7, 2, true, ref Feld));
+            this.FigurHinzufuegen(new Bischhof(false, 7, 5, true, ref Feld));
+            this.FigurHinzufuegen(new Koenig(false, 7, 4, true, ref Feld));
+            this.FigurHinzufuegen(new Dame(false, 7, 3, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 0, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 1, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 2, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 3, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 6, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 4, true, ref Feld));
+            this.FigurHinzufuegen(new Bauer(false, 6, 5, true, ref Feld));
+            aktualisiereBitmap();
+        }
+
         public void Waehle(int zeile, int spalte)
         {
             Console.WriteLine(zeile + " " + spalte);
@@ -110,10 +166,15 @@ namespace Schach
                 Feld[this.auswahlSpalte, this.auswahlZeile].Spalte = spalte;
                 Feld[this.auswahlSpalte, this.auswahlZeile].Zeile = zeile;
 
-                Figur oldFigur = Feld[spalte, zeile];
+                Figur alteFigur = Feld[spalte, zeile];
                 Feld[spalte, zeile] = Feld[this.auswahlSpalte, this.auswahlZeile];
                 Feld[this.auswahlSpalte, this.auswahlZeile] = null;
 
+                if (alteFigur != null)
+                {
+                    this.figurGeschlagen(alteFigur);
+                }
+                
                 this.auswahlSpalte = -1;
                 this.auswahlZeile = -1;
 
@@ -167,26 +228,43 @@ namespace Schach
             }
         }
         
-        public void figurGeschlagen(string figur)
+        public void figurGeschlagen(Figur f)
         {
-            switch (figur)
+            if (!f.Weiss)
             {
-                case "Schach.Bauer": punkte += 1; break;
-                case "Schach.Turm": punkte += 5; break;
-                case "Schach.Koenig": punkte += 15; this.ende(punkte); break;
-                case "Schach.Dame": punkte += 9; break;
-                case "Schach.Springer": punkte += 3; break;
-                case "Schach.Bischof": punkte += 3; break;
-                default: break;
+                switch (f.ToString())
+                {
+                    case "Schach.Bauer": wpunkte += 1; break;
+                    case "Schach.Turm": wpunkte += 5; break;
+                    case "Schach.Koenig": wpunkte += 15; this.ende(!f.Weiss, wpunkte, spunkte); break;
+                    case "Schach.Dame": wpunkte += 9; break;
+                    case "Schach.Springer": wpunkte += 3; break;
+                    case "Schach.Bischof": wpunkte += 3; break;
+                    default: break;
+                }
+            }
+            else
+            {
+                switch (f.ToString())
+                {
+                    case "Schach.Bauer": spunkte += 1; break;
+                    case "Schach.Turm": spunkte += 5; break;
+                    case "Schach.Koenig": spunkte += 15; this.ende(!f.Weiss, wpunkte, spunkte); break;
+                    case "Schach.Dame": spunkte += 9; break;
+                    case "Schach.Springer": spunkte += 3; break;
+                    case "Schach.Bischof": spunkte += 3; break;
+                    default: break;
+                }
             }
         }
 
-        public void ende(int p)
+        public void ende(bool farbe, int wp,int sp)
         {
-            Console.WriteLine("ende");
-            StreamWriter sw = new StreamWriter("..\\..\\Ergebnis\\Ergebnis.txt");
-            sw.WriteLine("Gewinner Punkte: " + p);
-            MessageBox.Show("X hat gewonnen");
+            KoenigGeschlagen = true;
+            StreamWriter sw = new StreamWriter("..\\..\\Ergebnis\\Ergebnis.txt", append: true);
+            sw.WriteLine("Spiel:" + "\r\n" + "Weis Punkte: " + wp + "\r\n" + "Schwarz Punkte: " + sp);
+            sw.Close();
+            MessageBox.Show(((farbe) ? "Weis" : "Schwarz") + " hat Gewonnen");
         }
 
         public void aktualisiereBitmap()

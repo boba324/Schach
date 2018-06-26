@@ -1,0 +1,6 @@
+Spiel:
+Weis Punkte: 17
+Schwarz Punkte: 1
+Spiel:
+Weis Punkte: 1
+Schwarz Punkte: 16

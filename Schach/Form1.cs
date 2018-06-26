@@ -82,6 +82,17 @@ namespace Schach
             {
                 label1.Text = "Schwarz";
             }
+
+            if (sch.KoenigGeschlagen)
+            {
+                btnNeuesSpiel.Visible = true;
+            }
+        }
+
+        private void btnNeuesSpiel_Click(object sender, EventArgs e)
+        {
+            sch.neuesSpiel();
+            btnNeuesSpiel.Visible = false;
         }
     }
 }
