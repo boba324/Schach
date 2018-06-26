@@ -51,6 +51,15 @@ namespace Schach
             sch.FigurHinzufuegen(new Bauer(false, 6, 5, true, ref sch.Feld));
             sch.FigurHinzufuegen(new Bauer(false, 6, 6, true, ref sch.Feld));
             sch.FigurHinzufuegen(new Bauer(false, 6, 7, true, ref sch.Feld));
+            DialogResult dialogResult = MessageBox.Show("Können sie Schach spielen?", "Frage", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                sch.Pro = false;
+            }
+            else if (dialogResult == DialogResult.No)
+            {
+                sch.Pro = true;
+            }
         }
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -86,6 +95,7 @@ namespace Schach
             if (sch.KoenigGeschlagen)
             {
                 btnNeuesSpiel.Visible = true;
+                label1.Visible = false;
             }
         }
 
@@ -93,6 +103,8 @@ namespace Schach
         {
             sch.neuesSpiel();
             btnNeuesSpiel.Visible = false;
+            label1.Visible = true;
+            label1.Text = "Weiss";
         }
     }
 }

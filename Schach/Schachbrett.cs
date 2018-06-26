@@ -28,15 +28,16 @@ namespace Schach
         public Figur[,] Feld;
         public bool WeissAmZug = true;
         private bool isDebug = false;
-        private bool pro = true;
-        private bool koenigGeschlagen;
+
+        public bool Pro { get; set; }
+
+        private bool koenigGeschlagen = false;
 
         public bool KoenigGeschlagen
         {
             get { return koenigGeschlagen; }
             set { koenigGeschlagen = value; }
         }
-
 
         //Hintergrundfarbe
         public Color HintergrundFarbe
@@ -150,6 +151,10 @@ namespace Schach
             this.FigurHinzufuegen(new Bauer(false, 6, 6, true, ref Feld));
             this.FigurHinzufuegen(new Bauer(false, 6, 4, true, ref Feld));
             this.FigurHinzufuegen(new Bauer(false, 6, 5, true, ref Feld));
+            wpunkte = 0;
+            spunkte = 0;
+            WeissAmZug = true;
+            KoenigGeschlagen = false;
             aktualisiereBitmap();
         }
 
@@ -160,7 +165,7 @@ namespace Schach
                 this.auswahlZeile > -1 &&
                 Feld[this.auswahlSpalte, this.auswahlZeile] != null && 
                 (Feld[this.auswahlSpalte, this.auswahlZeile].Weiss == this.WeissAmZug || this.isDebug) && 
-                Feld[this.auswahlSpalte, this.auswahlZeile].kannBetreten(zeile, spalte))
+                Feld[this.auswahlSpalte, this.auswahlZeile].kannBetreten(zeile, spalte) && !KoenigGeschlagen)
             {
                 Feld[this.auswahlSpalte, this.auswahlZeile].FirstMove = false;
                 Feld[this.auswahlSpalte, this.auswahlZeile].Spalte = spalte;
@@ -317,9 +322,9 @@ namespace Schach
                 spalteTmp = spalteTmp + beschriftung - 8;
             }
 
-            if (pro)
+            if (Pro)
             {
-            if (auswahlSpalte >= 0 && auswahlZeile >= 0 && Feld[auswahlSpalte, auswahlZeile] != null)
+            if (auswahlSpalte >= 0 && auswahlZeile >= 0 && Feld[auswahlSpalte, auswahlZeile] != null && !KoenigGeschlagen)
             {
                 for (int i = 0; i < b; i++)
                 {
