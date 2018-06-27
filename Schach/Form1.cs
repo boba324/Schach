@@ -78,7 +78,7 @@ namespace Schach
         }
 
         private void panel1_MouseClick(object sender, MouseEventArgs e)
-        {
+        { 
             //Auf welches Feld wird geklickt
             sch.Waehle((int)Math.Floor((float)e.Y / 44 -1), (int)Math.Floor((float)e.X / 44 -1));
 
@@ -105,6 +105,24 @@ namespace Schach
             btnNeuesSpiel.Visible = false;
             label1.Visible = true;
             label1.Text = "Weiss";
+        }
+
+        private void btnSpielSpeichern_Click(object sender, EventArgs e)
+        {
+            sch.spielSpeichern();
+        }
+
+        private void btnSpielLaden_Click(object sender, EventArgs e)
+        {
+            sch.spielLaden();
+            if (sch.WeissAmZug)
+            {
+                label1.Text = "Weiss";
+            }
+            else
+            {
+                label1.Text = "Schwarz";
+            }
         }
     }
 }

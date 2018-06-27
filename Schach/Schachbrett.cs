@@ -158,6 +158,82 @@ namespace Schach
             aktualisiereBitmap();
         }
 
+        public void spielSpeichern()
+        {
+            Figur[,] zwSpeicher = new Figur[8,8];
+            FileStream fs = new FileStream("..\\..\\Speicherdaten\\Speicher.txt", FileMode.Create, FileAccess.Write, FileShare.None);
+            FileStream stat = new FileStream("..\\..\\Speicherdaten\\Stat.txt", FileMode.Create, FileAccess.Write, FileShare.None);
+            StreamWriter sw = new StreamWriter(fs);
+            StreamWriter statw = new StreamWriter(stat);
+            statw.WriteLine(wpunkte);
+            statw.WriteLine(spunkte);
+            statw.WriteLine(WeissAmZug);
+            statw.WriteLine(KoenigGeschlagen);
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (Feld[i, j] != null)
+                    {
+                        sw.WriteLine(i + "-" + j + "-" + Feld[i, j].ToString() + "|" + Feld[i, j].Weiss);
+                    }
+                    else
+                    {
+                        sw.WriteLine(i + "-" + j + "-" + "null" + "|null");
+                    }
+                }
+            }
+            sw.Close();
+            statw.Close();
+        }
+
+        public void spielLaden()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Feld[i, j] = null;
+                }
+            }
+            Figur[,] zwSpeicher = new Figur[8, 8];
+            FileStream fs = new FileStream("..\\..\\Speicherdaten\\Speicher.txt", FileMode.Open, FileAccess.Read, FileShare.None);
+            FileStream stat = new FileStream("..\\..\\Speicherdaten\\Stat.txt", FileMode.Open, FileAccess.Read, FileShare.None);
+            StreamReader sr = new StreamReader(fs);
+            StreamReader statr = new StreamReader(stat);
+            string[] tmp1 = new string[4];
+            for (int i = 0; i < 4; i++)
+            {
+                tmp1[i] = statr.ReadLine();
+            }
+            wpunkte = Convert.ToInt32(tmp1[0]);
+            wpunkte = Convert.ToInt32(tmp1[1]);
+            WeissAmZug = Convert.ToBoolean(tmp1[2].ToLower());
+            KoenigGeschlagen = Convert.ToBoolean(tmp1[3].ToLower());
+            string[,] tmp = new string[8,8];
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    tmp[i, j] = sr.ReadLine();
+                    switch (tmp[i, j].Substring(4, tmp[i, j].IndexOf("|") - 4))
+                    {
+                        case "Schach.Bauer": this.FigurHinzufuegen(new Bauer(Convert.ToBoolean(tmp[i, j].Substring(tmp[i, j].IndexOf("|") + 1).ToLower()), Convert.ToInt32(tmp[i, j].Substring(2, 1)), Convert.ToInt32(tmp[i, j].Substring(0, 1)), true, ref Feld)); break;
+                        case "Schach.Turm": this.FigurHinzufuegen(new Turm(Convert.ToBoolean(tmp[i, j].Substring(tmp[i, j].IndexOf("|") + 1).ToLower()), Convert.ToInt32(tmp[i, j].Substring(2, 1)), Convert.ToInt32(tmp[i, j].Substring(0, 1)), true, ref Feld)); break;
+                        case "Schach.Koenig": this.FigurHinzufuegen(new Koenig(Convert.ToBoolean(tmp[i, j].Substring(tmp[i, j].IndexOf("|") + 1).ToLower()), Convert.ToInt32(tmp[i, j].Substring(2, 1)), Convert.ToInt32(tmp[i, j].Substring(0, 1)), true, ref Feld)); break;
+                        case "Schach.Dame": this.FigurHinzufuegen(new Dame(Convert.ToBoolean(tmp[i, j].Substring(tmp[i, j].IndexOf("|") + 1).ToLower()), Convert.ToInt32(tmp[i, j].Substring(2, 1)), Convert.ToInt32(tmp[i, j].Substring(0, 1)), true, ref Feld)); break;
+                        case "Schach.Springer": this.FigurHinzufuegen(new Springer(Convert.ToBoolean(tmp[i, j].Substring(tmp[i, j].IndexOf("|") + 1).ToLower()), Convert.ToInt32(tmp[i, j].Substring(2, 1)), Convert.ToInt32(tmp[i, j].Substring(0, 1)), true, ref Feld)); break;
+                        case "Schach.Bischhof": this.FigurHinzufuegen(new Bischhof(Convert.ToBoolean(tmp[i, j].Substring(tmp[i, j].IndexOf("|") + 1).ToLower()), Convert.ToInt32(tmp[i, j].Substring(2, 1)), Convert.ToInt32(tmp[i, j].Substring(0, 1)), true, ref Feld)); break;
+                        case "null": Feld[i, j] = null; break;
+                        default: break;
+                    }
+                }
+            }
+            sr.Close();
+            statr.Close();
+            aktualisiereBitmap();
+        }
+
         public void Waehle(int zeile, int spalte)
         {
             Console.WriteLine(zeile + " " + spalte);
@@ -244,7 +320,7 @@ namespace Schach
                     case "Schach.Koenig": wpunkte += 15; this.ende(!f.Weiss, wpunkte, spunkte); break;
                     case "Schach.Dame": wpunkte += 9; break;
                     case "Schach.Springer": wpunkte += 3; break;
-                    case "Schach.Bischof": wpunkte += 3; break;
+                    case "Schach.Bischhof": wpunkte += 3; break;
                     default: break;
                 }
             }
@@ -257,7 +333,7 @@ namespace Schach
                     case "Schach.Koenig": spunkte += 15; this.ende(!f.Weiss, wpunkte, spunkte); break;
                     case "Schach.Dame": spunkte += 9; break;
                     case "Schach.Springer": spunkte += 3; break;
-                    case "Schach.Bischof": spunkte += 3; break;
+                    case "Schach.Bischhof": spunkte += 3; break;
                     default: break;
                 }
             }
