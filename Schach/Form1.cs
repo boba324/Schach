@@ -17,6 +17,7 @@ namespace Schach
         {
             InitializeComponent();
             Initialize();
+            #region Figuren initialisieren
             //Weiße Figuren
             sch.FigurHinzufuegen(new Turm(true, 0, 0, true, ref sch.Feld));
             sch.FigurHinzufuegen(new Turm(true, 0, 7, true, ref sch.Feld));
@@ -60,6 +61,7 @@ namespace Schach
             {
                 sch.Pro = true;
             }
+            #endregion
         }
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -67,22 +69,26 @@ namespace Schach
         }
         private void Initialize()
         {
+            #region Form Eigenschaften
             this.ClientSize = new Size(sch.gibBreite() * 42 + 50 + 150, sch.gibHoehe() * 42 + 100);
             sch.HintergrundFarbe = this.BackColor;
             sch.BitmapGeaendert += OnPaint;
+            #endregion
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
+            #region Panel
             e.Graphics.DrawImageUnscaled(sch.gibWeltBild(), Point.Empty);
+            #endregion
         }
 
         private void panel1_MouseClick(object sender, MouseEventArgs e)
-        { 
-            //Auf welches Feld wird geklickt
+        {
+            #region Auf welches Feld wurde geklickt
             sch.Waehle((int)Math.Floor((float)e.Y / 44 -1), (int)Math.Floor((float)e.X / 44 -1));
-
-            //Wer ist am Zug ?
+            #endregion
+            #region Wer dran
             if (sch.WeissAmZug)
             {
                 label1.Text = "Weiss";
@@ -97,23 +103,29 @@ namespace Schach
                 btnNeuesSpiel.Visible = true;
                 label1.Visible = false;
             }
+            #endregion
         }
 
         private void btnNeuesSpiel_Click(object sender, EventArgs e)
         {
+            #region Neues Spiel
             sch.neuesSpiel();
             btnNeuesSpiel.Visible = false;
             label1.Visible = true;
             label1.Text = "Weiss";
+            #endregion
         }
 
         private void btnSpielSpeichern_Click(object sender, EventArgs e)
         {
+            #region Spiel Speichern
             sch.spielSpeichern();
+            #endregion
         }
 
         private void btnSpielLaden_Click(object sender, EventArgs e)
         {
+            #region Spiel Laden
             sch.spielLaden();
             if (sch.WeissAmZug)
             {
@@ -123,6 +135,7 @@ namespace Schach
             {
                 label1.Text = "Schwarz";
             }
+            #endregion
         }
     }
 }

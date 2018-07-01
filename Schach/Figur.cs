@@ -9,13 +9,15 @@ namespace Schach
 {
     abstract class Figur
     {
+        #region Variablen
         protected String ImageFile;
         public bool Weiss { get; set; }
         public int Zeile { get; set; }
         public int Spalte { get; set; }
         public bool FirstMove { get; set; }
         protected Figur[,] feld;
-
+        #endregion
+        #region Konstruktor
         public Figur(bool weiss, int zeile, int spalte, bool firstMove, ref Figur[,] feld)
         {
             this.Weiss = weiss;
@@ -24,11 +26,14 @@ namespace Schach
             this.FirstMove = firstMove;
             this.feld = feld;
         }
-
+        #endregion
+        #region Ist das Feld betretbar
         public abstract bool kannBetreten(int zeile, int spalte);
-
+        #endregion
+        #region Ist eine Figur im Weg
         protected abstract bool istNichtsImWeg(int zeile, int spalte);
-
+        #endregion
+        #region Überprüfung ob weg Frei ist
         protected bool istWegFrei(int zeile, int spalte)
         {
             int addSpalte = 0;
@@ -75,13 +80,13 @@ namespace Schach
 
             return true;
         }
-        
-        
-
+        #endregion
+        #region Übernehme Bilder der Figuren
         public Bitmap getBild()
         {
-            Bitmap wrk = (Bitmap)Image.FromFile("..\\..\\Recources\\image\\" + ((Weiss) ? "White" : "Black") + ImageFile + ".png", true);
-            return wrk;
+            Bitmap fg = (Bitmap)Image.FromFile("..\\..\\Recources\\image\\" + ((Weiss) ? "White" : "Black") + ImageFile + ".png", true);
+            return fg;
         }
+        #endregion
     }
 }

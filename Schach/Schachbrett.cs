@@ -13,6 +13,7 @@ namespace Schach
     public delegate void eventHandler(PaintEventArgs e);
     class Schachbrett
     {
+        #region Variablen und Propperties
         //Benötigten wariablen
         private Bitmap bg;
         private Graphics gr;
@@ -28,17 +29,13 @@ namespace Schach
         public Figur[,] Feld;
         public bool WeissAmZug = true;
         private bool isDebug = false;
-
         public bool Pro { get; set; }
-
         private bool koenigGeschlagen = false;
-
         public bool KoenigGeschlagen
         {
             get { return koenigGeschlagen; }
             set { koenigGeschlagen = value; }
         }
-
         //Hintergrundfarbe
         public Color HintergrundFarbe
         {
@@ -57,7 +54,9 @@ namespace Schach
         {
             return h;
         }
-
+        #endregion
+        #region Methoden
+        #region Konstruktor
         public Schachbrett(int spalten, int zeilen)
         {
             b = spalten;
@@ -72,7 +71,8 @@ namespace Schach
             gr.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
             aktualisiereBitmap();
         }
-
+        #endregion
+        #region Figur hinzufügen und entfernen
         public void FigurHinzufuegen(Figur e)
         {
             try
@@ -106,7 +106,8 @@ namespace Schach
                 return null;
             }
         }
-
+        #endregion
+        #region Neues Spiel
         public void neuesSpiel()
         {
             for (int i = 0; i < 8; i++)
@@ -157,7 +158,8 @@ namespace Schach
             KoenigGeschlagen = false;
             aktualisiereBitmap();
         }
-
+        #endregion
+        #region Spiel Speichern
         public void spielSpeichern()
         {
             Figur[,] zwSpeicher = new Figur[8,8];
@@ -186,7 +188,8 @@ namespace Schach
             sw.Close();
             statw.Close();
         }
-
+        #endregion
+        #region Spiel Laden
         public void spielLaden()
         {
             for (int i = 0; i < 8; i++)
@@ -233,7 +236,8 @@ namespace Schach
             statr.Close();
             aktualisiereBitmap();
         }
-
+        #endregion
+        #region Gewählte Figur
         public void Waehle(int zeile, int spalte)
         {
             Console.WriteLine(zeile + " " + spalte);
@@ -277,7 +281,8 @@ namespace Schach
 
             aktualisiereBitmap();
         }
-
+        #endregion
+        #region Bauer wird zur Dame
         public void werdeZurDame()
         {
             for (int i = 0; i < b; i++)
@@ -308,7 +313,8 @@ namespace Schach
                 }
             }
         }
-        
+        #endregion
+        #region Punktesystem
         public void figurGeschlagen(Figur f)
         {
             if (!f.Weiss)
@@ -338,7 +344,8 @@ namespace Schach
                 }
             }
         }
-
+        #endregion
+        #region Koenig wurde Geschlagen
         public void ende(bool farbe, int wp,int sp)
         {
             KoenigGeschlagen = true;
@@ -347,10 +354,12 @@ namespace Schach
             sw.Close();
             MessageBox.Show(((farbe) ? "Weis" : "Schwarz") + " hat Gewonnen");
         }
-
+        #endregion
+        #region Schachbrett
         public void aktualisiereBitmap()
         {
             gr.Clear(hintergrundfarbe);
+            #region Beschriftung und Raster
             ///Vertikale Linien
             for (int i = 0; i <= b; i++)
             {
@@ -372,7 +381,8 @@ namespace Schach
                 gr.DrawString((j + 1).ToString(), new Font("Calibri", 20), new SolidBrush(Color.Black), 15, beschriftung + j * 42 + 42 / 4);
 
             }
-
+            #endregion
+            #region Felder
             int counter = 1;
             int zeileTmp = beschriftung + 3;
             int spalteTmp = beschriftung + 3;
@@ -397,24 +407,26 @@ namespace Schach
                 zeileTmp = beschriftung + 3;
                 spalteTmp = spalteTmp + beschriftung - 8;
             }
-
+            #endregion
+            #region Wie kann ich ziehen
             if (Pro)
             {
-            if (auswahlSpalte >= 0 && auswahlZeile >= 0 && Feld[auswahlSpalte, auswahlZeile] != null && !KoenigGeschlagen)
-            {
-                for (int i = 0; i < b; i++)
+                if (auswahlSpalte >= 0 && auswahlZeile >= 0 && Feld[auswahlSpalte, auswahlZeile] != null && !KoenigGeschlagen)
                 {
-                    for (int j = 0; j < h; j++)
+                    for (int i = 0; i < b; i++)
                     {
-                        if (Feld[auswahlSpalte, auswahlZeile].kannBetreten(j, i))
+                        for (int j = 0; j < h; j++)
                         {
-                            gr.FillRectangle(new SolidBrush(Color.Yellow), beschriftung + 3 + i * 42, beschriftung + 3 + j * 42, beschriftung - 10, beschriftung - 10);
+                            if (Feld[auswahlSpalte, auswahlZeile].kannBetreten(j, i))
+                            {
+                                gr.FillRectangle(new SolidBrush(Color.Yellow), beschriftung + 3 + i * 42, beschriftung + 3 + j * 42, beschriftung - 10, beschriftung - 10);
+                            }
                         }
                     }
                 }
             }
-            }
-
+            #endregion
+            #region Bilder der Figuren anzeigen
             //Bilder einfuegen
             for (int i = 0; i < b; i++)
             {
@@ -428,13 +440,16 @@ namespace Schach
                     }
                 }
             }
+            #endregion
             if (BitmapGeaendert != null) BitmapGeaendert(null);
         }
-
+        #endregion
+        #region Gib Welt
         public Bitmap gibWeltBild()
         {
             return bg;
         }
-        
+        #endregion
+        #endregion
     }
 }

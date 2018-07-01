@@ -1,3 +1,6 @@
 Spiel:
 Weis Punkte: 18
 Schwarz Punkte: 0
+Spiel:
+Weis Punkte: 0
+Schwarz Punkte: 15
